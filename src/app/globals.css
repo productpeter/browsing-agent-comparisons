@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --surface: #f6f3ee;
+  --card: #fffcf7;
+  --ink: #1c1914;
+  --muted: #6b6560;
+  --line: #e2dcd3;
+  --accent: #c45c26;
+  --tabstack: #2563eb;
+  --firecrawl: #ea580c;
+}
+
+@theme inline {
+  --color-background: var(--surface);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #12100e;
+    --card: #1a1714;
+    --ink: #f0ebe4;
+    --muted: #9c948a;
+    --line: #2e2923;
+    --accent: #e07840;
+    --tabstack: #60a5fa;
+    --firecrawl: #fb923c;
+  }
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--accent) 40%, var(--card));
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: color-mix(in srgb, var(--accent) 45%, var(--surface));
+  }
+}
+
+/* Primary buttons / selected tabs — warm accent tint, not flat black zinc. */
+.ctrl-primary {
+  background-color: color-mix(in srgb, var(--accent) 22%, var(--card));
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ctrl-primary {
+    background-color: color-mix(in srgb, var(--accent) 36%, var(--card));
+  }
+}
+
+/* Main Run CTA — explicit frame + surface so it reads as a control, not bare text. */
+.btn-run {
+  background-color: var(--card);
+  border: 2px solid var(--accent);
+  color: var(--ink);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-run {
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+}
