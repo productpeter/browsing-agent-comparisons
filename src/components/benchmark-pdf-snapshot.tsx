@@ -6,7 +6,7 @@ import {
 } from "@/lib/credit-comparison";
 import type { ReportComparePayload } from "@/lib/comparison-report-pdf";
 import type { BenchmarkRow, CompareMode } from "@/lib/compare-modes";
-import { forwardRef, type CSSProperties } from "react";
+import { forwardRef, useEffect, useState, type CSSProperties } from "react";
 
 /** Long outputs — cap so the canvas stays reasonable; full data stays in the app. */
 const MAX_PREVIEW_CHARS = 18_000;
@@ -109,7 +109,7 @@ function metaLine(b: BenchmarkRow): string {
 
 function truncatePreview(s: string): string {
   if (s.length <= MAX_PREVIEW_CHARS) return s;
-  return `${s.slice(0, MAX_PREVIEW_CHARS)}\n\n… [truncated at ${MAX_PREVIEW_CHARS.toLocaleString()} chars for PDF]`;
+  return `${s.slice(0, MAX_PREVIEW_CHARS)}\n\n… [truncated at ${MAX_PREVIEW_CHARS.toLocaleString("en-US")} chars for PDF]`;
 }
 
 function jsonStringifyForDisplay(data: ReportComparePayload): string {
@@ -504,7 +504,13 @@ type Props = {
 export const BenchmarkPdfSnapshot = forwardRef<HTMLDivElement, Props>(
   function BenchmarkPdfSnapshot({ resultsByMode, modeLabels }, ref) {
     const present = MODE_ORDER.filter((m) => resultsByMode[m] != null);
-    const generated = formatComparedAt(new Date().toISOString());
+    /** Set after mount — `new Date()` during SSR vs hydrate differs and causes hydration errors. */
+    const [pdfGeneratedLabel, setPdfGeneratedLabel] = useState<string | null>(
+      null
+    );
+    useEffect(() => {
+      setPdfGeneratedLabel(formatComparedAt(new Date().toISOString()));
+    }, []);
 
     return (
       <div
@@ -532,8 +538,8 @@ export const BenchmarkPdfSnapshot = forwardRef<HTMLDivElement, Props>(
               }}
             />
             <p className="font-mono text-xs text-[var(--muted)]">
-              PDF generated {generated} · {present.length} of {MODE_ORDER.length}{" "}
-              modes
+              PDF generated {pdfGeneratedLabel ?? "—"} · {present.length} of{" "}
+              {MODE_ORDER.length} modes
             </p>
           </div>
         </header>
